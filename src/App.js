@@ -1,10 +1,10 @@
 import './App.css';
-import FragmentsTable from "./FragmentsTable";
+import Page from "./Page";
 
 function App() {
   return (
     <div className="App">
-        <FragmentsTable />
+        <Page />
     </div>
   );
 }

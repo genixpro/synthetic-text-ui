@@ -1,24 +1,22 @@
 import {useCallback, useEffect, useState} from "react";
 import "./FragmentGenerator.scss";
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import {CardHeader} from "@mui/material";
 
-function generateRandomText(fragmentTextsByFragmentName, fragmentName) {
+function generateRandomText(fragmentTexts, fragmentName) {
     if (!fragmentName) {
         fragmentName = "root";
     }
 
     // We recursively generate and fill all fragments
-    const fragmentTexts = fragmentTextsByFragmentName[fragmentName];
-
-    if (!fragmentTexts) {
+    const fragmentTextsForFragmentName = fragmentTexts[fragmentName];
+    if (!fragmentTextsForFragmentName) {
         return "";
     }
 
     // Filter for only texts that have something other then whitespace
-    const nonEmptyFragmentTexts = fragmentTexts.filter((fragmentText) => fragmentText.trim());
+    const nonEmptyFragmentTexts = fragmentTextsForFragmentName.filter((fragmentText) => fragmentText.trim());
 
     // IF there is nothing left, use an empty string
     if (nonEmptyFragmentTexts.length === 0) {
@@ -33,7 +31,7 @@ function generateRandomText(fragmentTextsByFragmentName, fragmentName) {
     const references = randomText.match(/@([a-zA-Z0-9]+)/g) || [];
     for (const reference of references) {
         const referencedFragmentName = reference.substring(1);
-        const referencedFragmentText = generateRandomText(fragmentTextsByFragmentName, referencedFragmentName);
+        const referencedFragmentText = generateRandomText(fragmentTexts, referencedFragmentName);
         randomText = randomText.replace(reference, referencedFragmentText);
     }
 
@@ -42,15 +40,15 @@ function generateRandomText(fragmentTextsByFragmentName, fragmentName) {
 
 
 
-export const FragmentGenerator = function FragmentGenerator(props) {
-    const fragmentTextsByFragmentName = props.fragmentTextsByFragmentName;
+export default function FragmentGenerator(props) {
+    const fragmentTexts = props.fragmentTexts;
     let maxNumberOfFragmentTexts = 10;
     const [generatedFragments, setGeneratedFragments] = useState([]);
     const [intervalId, setIntervalId] = useState(null);
 
     const addNewFragment = useCallback(() => {
         const newGeneratedFragments = [...generatedFragments];
-        const newGeneratedFragmentText = generateRandomText(fragmentTextsByFragmentName);
+        const newGeneratedFragmentText = generateRandomText(fragmentTexts);
         newGeneratedFragments.unshift({
             text: newGeneratedFragmentText,
             id: Math.random(),
@@ -59,7 +57,7 @@ export const FragmentGenerator = function FragmentGenerator(props) {
             newGeneratedFragments.pop();
         }
         setGeneratedFragments(newGeneratedFragments);
-    }, [generatedFragments, fragmentTextsByFragmentName]);
+    }, [generatedFragments, fragmentTexts]);
 
     useEffect(() => {
         if (intervalId) {
@@ -80,7 +78,7 @@ export const FragmentGenerator = function FragmentGenerator(props) {
 
     return <div className={"fragment-generator"}>
         <Card>
-            <CardHeader title={"Generated Fragments"} />
+            <CardHeader title={"Generated Samples"} />
             <CardContent>
                 <ul className={"generated-fragments-list"}>
                     {generatedFragments.map((generatedFragment, index) => {

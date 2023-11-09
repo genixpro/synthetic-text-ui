@@ -8,9 +8,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import {FragmentGenerator} from "./FragmentGenerator";
+import {CardHeader} from "@mui/material";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
-export default function FragmentsTable() {
+export default function FragmentsTable(props) {
     const [fragmentNames, setFragmentNames] = React.useState(['root']);
     const [fragmentTextsByFragmentName, setFragmentTextsByFragmentName] = React.useState({
         'root': [''],
@@ -32,6 +34,9 @@ export default function FragmentsTable() {
             }
         }
         setFragmentTextsByFragmentName(newFragmentTextsByFragmentName);
+        if (props.onFragmentsChanged) {
+            props.onFragmentsChanged(newFragmentTextsByFragmentName);
+        }
     }
 
     const handleAddNewFragmentClicked = function() {
@@ -43,6 +48,9 @@ export default function FragmentsTable() {
             [newFragmentName]: [''],
         };
         setFragmentTextsByFragmentName(newFragmentTextsByFragmentName);
+        if (props.onFragmentsChanged) {
+            props.onFragmentsChanged(newFragmentTextsByFragmentName);
+        }
 
         const newFragmentNames = [...fragmentNames];
         newFragmentNames.push(newFragmentName);
@@ -55,6 +63,9 @@ export default function FragmentsTable() {
         fragmentTexts[fragmentTextIndex] = evt.target.value;
         newFragmentTextsByFragmentName[fragmentName] = fragmentTexts;
         setFragmentTextsByFragmentName(newFragmentTextsByFragmentName);
+        if (props.onFragmentsChanged) {
+            props.onFragmentsChanged(newFragmentTextsByFragmentName);
+        }
     }
 
     let maxNumberOfFragmentTexts = 0;
@@ -78,6 +89,11 @@ export default function FragmentsTable() {
                 </TableCell>
             );
         }
+
+        bodyRow.push(
+            <TableCell />
+        )
+
         bodyRows.push(
             <TableRow>
                 {bodyRow}
@@ -85,7 +101,9 @@ export default function FragmentsTable() {
         );
     }
 
-    return (<>
+    return (<Card>
+            <CardHeader title={"Fragment Texts"} />
+            <CardContent>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -111,10 +129,7 @@ export default function FragmentsTable() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <br/>
-            <br/>
-            <br/>
-            <FragmentGenerator fragmentTextsByFragmentName={fragmentTextsByFragmentName} />
-        </>
+            </CardContent>
+        </Card>
     );
 }
