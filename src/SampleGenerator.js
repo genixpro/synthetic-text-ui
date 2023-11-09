@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import "./FragmentGenerator.scss";
+import "./SampleGenerator.scss";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import {CardHeader} from "@mui/material";
@@ -40,7 +40,7 @@ function generateRandomText(fragmentTexts, fragmentName) {
 
 
 
-export default function FragmentGenerator(props) {
+export default function SampleGenerator(props) {
     const fragmentTexts = props.fragmentTexts;
     let maxNumberOfFragmentTexts = 10;
     const [generatedFragments, setGeneratedFragments] = useState([]);
@@ -76,13 +76,13 @@ export default function FragmentGenerator(props) {
     }, [addNewFragment]); // Empty dependency array ensures this runs once on mount
 
 
-    return <div className={"fragment-generator"}>
+    return <div className={"sample-generator"}>
         <Card>
             <CardHeader title={"Generated Samples"} />
             <CardContent>
-                <ul className={"generated-fragments-list"}>
+                <ul className={"generated-samples-list"}>
                     {generatedFragments.map((generatedFragment, index) => {
-                        return <li className={"generated-fragment"} key={`${generatedFragment.id}`}>{generatedFragment.text}</li>
+                        return <li className={"generated-sample"} key={`${generatedFragment.id}`}>{generatedFragment.text}</li>
                     })}
                 </ul>
             </CardContent>

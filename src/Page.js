@@ -1,5 +1,5 @@
 import * as React from 'react';
-import FragmentGenerator from "./FragmentGenerator";
+import SampleGenerator from "./SampleGenerator";
 import FragmentsTable from "./FragmentsTable";
 
 
@@ -16,6 +16,6 @@ export default function Page() {
             onFragmentsChanged={onFragmentsChanged}
         />
         <br/>
-        <FragmentGenerator fragmentTexts={fragmentTexts} />
+        <SampleGenerator fragmentTexts={fragmentTexts} />
     </>
 }
