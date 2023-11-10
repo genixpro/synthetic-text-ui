@@ -16,7 +16,7 @@ function generateRandomText(fragmentTexts, fragmentName) {
     }
 
     // Filter for only texts that have something other then whitespace
-    const nonEmptyFragmentTexts = fragmentTextsForFragmentName.filter((fragmentText) => fragmentText.trim());
+    const nonEmptyFragmentTexts = fragmentTextsForFragmentName.filter((fragmentText) => (fragmentText ?? "").trim());
 
     // IF there is nothing left, use an empty string
     if (nonEmptyFragmentTexts.length === 0) {
@@ -39,10 +39,18 @@ function generateRandomText(fragmentTexts, fragmentName) {
 }
 
 
+function GeneratedSamplesList({columnIndex, samples}) {
+    return <ul className={"generated-samples-list"} key={columnIndex}>
+        {samples.map((generatedFragment, index) => {
+            return <li className={`generated-sample ${index === 0 && columnIndex === 0 ? 'new' : ''}`}
+                       key={`${generatedFragment.id}`}>{generatedFragment.text}</li>
+        })}
+    </ul>;
+}
 
 export default function SampleGenerator(props) {
     const fragmentTexts = props.fragmentTexts;
-    let maxNumberOfFragmentTexts = 10;
+    let maxNumberOfFragmentTexts = 15;
     const [generatedFragments, setGeneratedFragments] = useState([]);
     const [intervalId, setIntervalId] = useState(null);
 
@@ -75,16 +83,26 @@ export default function SampleGenerator(props) {
         return () => clearInterval(newIntervalId);
     }, [addNewFragment]); // Empty dependency array ensures this runs once on mount
 
+    const nonEmptyFragments = generatedFragments.filter((generatedFragment) => (generatedFragment.text ?? "").trim());
+
+    const numColumns = 3;
+    const entriesPerColumn = Math.max(5, Math.ceil(nonEmptyFragments.length / numColumns));
+    const columns = [];
+    for (let columnIndex = 0; columnIndex < numColumns; columnIndex++) {
+        columns.push(nonEmptyFragments.slice(columnIndex * entriesPerColumn, (columnIndex + 1) * entriesPerColumn));
+    }
 
     return <div className={"sample-generator"}>
         <Card>
             <CardHeader title={"Generated Samples"} />
             <CardContent>
-                <ul className={"generated-samples-list"}>
-                    {generatedFragments.map((generatedFragment, index) => {
-                        return <li className={"generated-sample"} key={`${generatedFragment.id}`}>{generatedFragment.text}</li>
-                    })}
-                </ul>
+                <div className={"generated-samples-area"}>
+                    {
+                        columns.map((samples, columnIndex) =>
+                            <GeneratedSamplesList key={columnIndex} samples={samples} columnIndex={columnIndex} />
+                        )
+                    }
+                </div>
             </CardContent>
         </Card>
     </div>

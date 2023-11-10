@@ -13,16 +13,16 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
 export default function FragmentsTable(props) {
-    const [fragmentNames, setFragmentNames] = React.useState(['root']);
-    const [fragmentTextsByFragmentName, setFragmentTextsByFragmentName] = React.useState({
-        'root': [''],
-    });
+    const fragmentTextsByFragmentName = props.fragmentTexts;
+    const fragmentNames = Object.keys(fragmentTextsByFragmentName);
+
+    const changeFragmentTexts = function(newFragmentTexts) {
+        if (props.onFragmentsChanged) {
+            props.onFragmentsChanged(newFragmentTexts);
+        }
+    }
 
     const handleFragmentNameChange = function(evt, fragmentIndex) {
-        const newFragmentNames = [...fragmentNames];
-        newFragmentNames[fragmentIndex] = evt.target.value;
-        setFragmentNames(newFragmentNames);
-
         // Create a new fragmentTextsByFragmentName object
         const newFragmentTextsByFragmentName = {};
         for (let existingFragmentIndex = 0; existingFragmentIndex < fragmentNames.length; existingFragmentIndex++) {
@@ -33,10 +33,7 @@ export default function FragmentsTable(props) {
                 newFragmentTextsByFragmentName[existingFragmentName] = fragmentTextsByFragmentName[existingFragmentName];
             }
         }
-        setFragmentTextsByFragmentName(newFragmentTextsByFragmentName);
-        if (props.onFragmentsChanged) {
-            props.onFragmentsChanged(newFragmentTextsByFragmentName);
-        }
+        changeFragmentTexts(newFragmentTextsByFragmentName);
     }
 
     const handleAddNewFragmentClicked = function() {
@@ -47,14 +44,7 @@ export default function FragmentsTable(props) {
             ...fragmentTextsByFragmentName,
             [newFragmentName]: [''],
         };
-        setFragmentTextsByFragmentName(newFragmentTextsByFragmentName);
-        if (props.onFragmentsChanged) {
-            props.onFragmentsChanged(newFragmentTextsByFragmentName);
-        }
-
-        const newFragmentNames = [...fragmentNames];
-        newFragmentNames.push(newFragmentName);
-        setFragmentNames(newFragmentNames);
+        changeFragmentTexts(newFragmentTextsByFragmentName);
     }
 
     const handleFragmentTextChange = function(evt, fragmentName, fragmentTextIndex) {
@@ -62,17 +52,14 @@ export default function FragmentsTable(props) {
         const fragmentTexts = [...newFragmentTextsByFragmentName[fragmentName]];
         fragmentTexts[fragmentTextIndex] = evt.target.value;
         newFragmentTextsByFragmentName[fragmentName] = fragmentTexts;
-        setFragmentTextsByFragmentName(newFragmentTextsByFragmentName);
-        if (props.onFragmentsChanged) {
-            props.onFragmentsChanged(newFragmentTextsByFragmentName);
-        }
+        changeFragmentTexts(newFragmentTextsByFragmentName);
     }
 
     let maxNumberOfFragmentTexts = 0;
     for (const fragmentName of fragmentNames) {
         const fragmentTexts = fragmentTextsByFragmentName[fragmentName];
         // Count the number of non-empty fragment texts
-        let numberOfFragmentTexts = fragmentTexts.filter((fragmentText) => fragmentText.trim()).length;
+        let numberOfFragmentTexts = fragmentTexts.filter((fragmentText) => (fragmentText ?? "").trim()).length;
         maxNumberOfFragmentTexts = Math.max(numberOfFragmentTexts, maxNumberOfFragmentTexts);
     }
 
@@ -84,18 +71,21 @@ export default function FragmentsTable(props) {
             const fragmentTexts = fragmentTextsByFragmentName[fragmentName];
             const fragmentText = fragmentTexts[fragmentTextIndex] || '';
             bodyRow.push(
-                <TableCell>
-                    <input value={fragmentText} onChange={(evt) => handleFragmentTextChange(evt, fragmentName, fragmentTextIndex)} />
+                <TableCell key={fragmentIndex}>
+                    <input
+                        value={fragmentText}
+                        onChange={(evt) => handleFragmentTextChange(evt, fragmentName, fragmentTextIndex)}
+                    />
                 </TableCell>
             );
         }
 
         bodyRow.push(
-            <TableCell />
+            <TableCell key={'spare'} />
         )
 
         bodyRows.push(
-            <TableRow>
+            <TableRow key={bodyRows.length}>
                 {bodyRow}
             </TableRow>
         );
@@ -110,8 +100,10 @@ export default function FragmentsTable(props) {
                         <TableRow>
                             {
                                 fragmentNames.map((fragmentName, fragmentIndex) => (
-                                    <TableCell>
-                                        <input value={fragmentName} onChange={(evt) => handleFragmentNameChange(evt, fragmentIndex)} />
+                                    <TableCell key={fragmentIndex}>
+                                        <input value={fragmentName}
+                                               onChange={(evt) => handleFragmentNameChange(evt, fragmentIndex)}
+                                        />
                                     </TableCell>
                                 ))
                             }

@@ -6,10 +6,23 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    text-align: left;
 
-    .generated-sample {
+    gap: 10px;
+
+    .generated-sample.new {
       /* An animation so that it fades in */
       animation: fade-in 0.5s ease-in-out;
+    }
+  }
+
+  .generated-samples-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    .generated-samples-list {
+      flex-basis: 25%;
     }
   }
 }
