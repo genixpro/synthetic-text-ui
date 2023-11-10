@@ -1,0 +1,52 @@
+
+.fragments-table {
+  .fragment-text-cell {
+    padding: 5px;
+
+    &:not(:last-child) {
+      border-right: 1px solid #ccc;
+    }
+
+    .fragment-text-cell-contents {
+      display: flex;
+      flex-direction: row;
+      justify-content: stretch;
+      align-items: stretch;
+      gap: 10px;
+      text-align: left;
+
+      input {
+        flex-grow: 1;
+        border: 0;
+      }
+    }
+
+    .invalid-reference-icon {
+      position: relative;
+      top: 3px;
+    }
+  }
+
+ .fragment-name-cell {
+   padding: 5px;
+
+   &:not(:last-child) {
+     border-right: 1px solid #ccc;
+   }
+
+   .fragment-name-cell-contents {
+     display: flex;
+     flex-direction: row;
+     justify-content: stretch;
+     align-items: center;
+     input {
+       flex-grow: 1;
+       border: 0;
+     }
+     .at-symbol {
+       position: relative;
+       top: 2px;
+     }
+   }
+ }
+}

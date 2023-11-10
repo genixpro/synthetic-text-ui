@@ -11,6 +11,10 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import {CardHeader} from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import {isFragmentTextValid} from "./fragment";
+import WarningIcon from '@mui/icons-material/Warning';
+import "./FragmentsTable.scss";
+
 
 export default function FragmentsTable(props) {
     const fragmentTextsByFragmentName = props.fragmentTexts;
@@ -70,12 +74,20 @@ export default function FragmentsTable(props) {
             const fragmentName = fragmentNames[fragmentIndex];
             const fragmentTexts = fragmentTextsByFragmentName[fragmentName];
             const fragmentText = fragmentTexts[fragmentTextIndex] || '';
+            let isValid = isFragmentTextValid(fragmentText, fragmentTextsByFragmentName);
             bodyRow.push(
-                <TableCell key={fragmentIndex}>
-                    <input
-                        value={fragmentText}
-                        onChange={(evt) => handleFragmentTextChange(evt, fragmentName, fragmentTextIndex)}
-                    />
+                <TableCell key={fragmentIndex} className={"fragment-text-cell"}>
+                    <div className={"fragment-text-cell-contents"}>
+                        <input
+                            value={fragmentText}
+                            onChange={(evt) => handleFragmentTextChange(evt, fragmentName, fragmentTextIndex)}
+                        />
+                        {
+                            !isValid ? <div className={"invalid-reference-icon"} title={"Reference Is Invalid"}>
+                                <WarningIcon color={"warning"} />
+                            </div>: null
+                        }
+                    </div>
                 </TableCell>
             );
         }
@@ -91,7 +103,7 @@ export default function FragmentsTable(props) {
         );
     }
 
-    return (<Card>
+    return (<Card className={"fragments-table"}>
             <CardHeader title={"Fragment Texts"} />
             <CardContent>
             <TableContainer component={Paper}>
@@ -100,19 +112,24 @@ export default function FragmentsTable(props) {
                         <TableRow>
                             {
                                 fragmentNames.map((fragmentName, fragmentIndex) => (
-                                    <TableCell key={fragmentIndex}>
-                                        <input value={fragmentName}
-                                               onChange={(evt) => handleFragmentNameChange(evt, fragmentIndex)}
-                                        />
+                                    <TableCell key={fragmentIndex} className={"fragment-name-cell"}>
+                                        <div className={"fragment-name-cell-contents"}>
+                                            <span className={"at-symbol"}>@</span>
+                                            <input value={fragmentName}
+                                                   onChange={(evt) => handleFragmentNameChange(evt, fragmentIndex)}
+                                            />
+                                        </div>
                                     </TableCell>
                                 ))
                             }
-                            <TableCell>
-                                <Button
-                                    variant="contained"
-                                    startIcon={<AddBoxIcon />}
-                                    onClick={handleAddNewFragmentClicked}
-                                />
+                            <TableCell className={"fragment-name-cell"}>
+                                <div className={"fragment-name-cell-contents"}>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<AddBoxIcon />}
+                                        onClick={handleAddNewFragmentClicked}
+                                    />
+                                </div>
                             </TableCell>
                         </TableRow>
                     </TableHead>
