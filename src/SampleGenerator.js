@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import "./SampleGenerator.scss";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import {CardHeader} from "@mui/material";
-import {generateRandomText} from "./fragment";
+import {estimateUniqueFragments, generateRandomText} from "./fragment";
 
 function GeneratedSamplesList({columnIndex, samples}) {
     return <ul className={"generated-samples-list"} key={columnIndex}>
@@ -58,10 +58,15 @@ export default function SampleGenerator(props) {
         columns.push(nonEmptyFragments.slice(columnIndex * entriesPerColumn, (columnIndex + 1) * entriesPerColumn));
     }
 
+    const estimatedCount = useMemo(() => estimateUniqueFragments(fragmentTexts), [fragmentTexts]);
+
     return <div className={"sample-generator"}>
         <Card>
             <CardHeader title={"Generated Samples"} />
             <CardContent>
+                <div className={"estimated-total-samples"}>
+                    Estimated Total Samples: {estimatedCount.toLocaleString()}
+                </div>
                 <div className={"generated-samples-area"}>
                     {
                         columns.map((samples, columnIndex) =>

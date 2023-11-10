@@ -54,3 +54,23 @@ export function isFragmentTextValid(text, fragmentTexts) {
     }
     return true;
 }
+
+export function estimateUniqueFragments(fragmentTexts) {
+    const numToGenerate = 1000;
+
+    // We generate 1,000 unique fragments twice
+    const firstSetUniqueFragments = new Set();
+    const secondSetUniqueFragments = new Set();
+    for (let i = 0; i < numToGenerate; i++) {
+        const randomFragment1 = generateRandomText(fragmentTexts);
+        const randomFragment2 = generateRandomText(fragmentTexts);
+        firstSetUniqueFragments.add(randomFragment1);
+        secondSetUniqueFragments.add(randomFragment2);
+    }
+
+    const intersection = new Set([...firstSetUniqueFragments].filter(x => secondSetUniqueFragments.has(x)));
+
+    // Now we can estimate the total number of possible fragments based on the number of duplicates between the two sets.
+    const estimatedUniqueFragments = Math.round((firstSetUniqueFragments.size * secondSetUniqueFragments.size) / intersection.size);
+    return estimatedUniqueFragments;
+}
